@@ -43,6 +43,9 @@
       flex-direction: column;
     }
 
+    /* ============================================
+       BANNER HEADER
+       ============================================ */
     .banner {
       width: 100%;
       aspect-ratio: 32.5 / 4.7;
@@ -62,6 +65,9 @@
       pointer-events: none;
     }
 
+    /* ============================================
+       KONTEN FORM
+       ============================================ */
     .content {
       flex: 1;
       display: flex;
@@ -95,20 +101,13 @@
       color: var(--text-muted);
     }
 
-    form#downloadForm {
-      width: 100%;
-      max-width: 640px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: clamp(18px, 3vh, 28px);
-    }
-
+    /* Form Group & Field Input */
     .form-group {
       display: flex;
       flex-direction: column;
       gap: clamp(14px, 2vh, 22px);
       width: 100%;
+      max-width: 640px;
       align-items: stretch;
     }
 
@@ -189,11 +188,13 @@
       text-align: center;
     }
 
+    /* Tombol Aksi */
     .btn-group {
       display: flex;
       flex-direction: column;
       gap: clamp(12px, 1.6vh, 18px);
       width: 100%;
+      max-width: 640px;
       margin-top: 4px;
     }
 
@@ -251,6 +252,7 @@
       box-shadow: 0 14px 24px -10px rgba(20, 30, 55, 0.25);
     }
 
+    /* Kotak Status Alert */
     .status-box {
       display: none;
       align-items: center;
@@ -265,12 +267,27 @@
     }
 
     .status-box.show { display: flex; }
+    .status-box i { font-size: 1.2rem; }
+
+    .status-box.info {
+      background: #e8f1ff;
+      color: #1e4faa;
+      border: 1.5px solid #c7dcff;
+    }
+
+    .status-box.success {
+      background: #e6f9ee;
+      color: #15703a;
+      border: 1.5px solid #b8ecc9;
+    }
+
     .status-box.error {
       background: #ffe8ec;
       color: #a31238;
       border: 1.5px solid #ffc4d0;
     }
 
+    /* Spinner Animasi */
     .spinner {
       display: inline-block;
       width: 16px;
@@ -285,6 +302,7 @@
       to { transform: rotate(360deg); }
     }
 
+    /* Slogan Footer */
     .slogan {
       text-align: center;
       padding: clamp(14px, 2vh, 22px) 16px;
@@ -324,6 +342,7 @@
       background: linear-gradient(90deg, var(--border), transparent);
     }
 
+    /* Responsive adjustments */
     @media (max-width: 768px) {
       .banner { aspect-ratio: 20.8 / 4.7; }
       .content {
@@ -358,42 +377,38 @@
         <p>Masukkan nama & kode untuk mengunduh wallpaper</p>
       </div>
 
-      <!-- Form Direct Submit -->
-      <form id="downloadForm" action="https://script.google.com/macros/s/AKfycbwzHVhEQsGLgHe_W5Vh4TAbv3JEETvuz7Ejd35y6UQPIkZSrB0MEV5xdzZEGWCkissG/exec" method="POST">
-        <div class="form-group">
-          <div class="field">
-            <label for="nama"><i class="fas fa-user"></i> Nama</label>
-            <input type="text" id="nama" name="nama" placeholder="Masukkan nama Anda" autocomplete="off" required>
-          </div>
-
-          <div class="field">
-            <label for="kode"><i class="fas fa-key"></i> Kode</label>
-            <input
-              type="text"
-              id="kode"
-              name="kode"
-              placeholder="XXXXXX"
-              maxlength="6"
-              autocomplete="off"
-              autocapitalize="characters"
-              spellcheck="false"
-              required
-            >
-          </div>
+      <div class="form-group">
+        <div class="field">
+          <label for="nama"><i class="fas fa-user"></i> Nama</label>
+          <input type="text" id="nama" placeholder="Masukkan nama Anda" autocomplete="off" required>
         </div>
 
-        <div class="btn-group">
-          <button type="submit" id="btnDownload" class="action-btn btn-download">
-            <i class="fas fa-download"></i> Download
-          </button>
-          <a href="index.html" class="action-btn btn-back">
-            <i class="fas fa-arrow-left"></i> Kembali
-          </a>
+        <div class="field">
+          <label for="kode"><i class="fas fa-key"></i> Kode</label>
+          <input
+            type="text"
+            id="kode"
+            placeholder="XXXXXX"
+            maxlength="6"
+            autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            required
+          >
         </div>
-      </form>
+      </div>
+
+      <div class="btn-group">
+        <button type="button" id="btnDownload" class="action-btn btn-download">
+          <i class="fas fa-download"></i> Download
+        </button>
+        <a href="index.html" class="action-btn btn-back">
+          <i class="fas fa-arrow-left"></i> Kembali
+        </a>
+      </div>
 
       <div class="status-box" id="statusBox">
-        <i class="fas fa-exclamation-circle"></i>
+        <i class="fas fa-info-circle" id="statusIcon"></i>
         <span id="statusText"></span>
       </div>
 
@@ -406,14 +421,17 @@
   </div>
 
   <script>
-    const namaInput    = document.getElementById('nama');
-    const kodeInput    = document.getElementById('kode');
-    const btnDownload  = document.getElementById('btnDownload');
-    const statusBox    = document.getElementById('statusBox');
-    const statusText   = document.getElementById('statusText');
-    const downloadForm = document.getElementById('downloadForm');
+    /* URL Deployment Apps Script Web App */
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyWJDKXjBKtOINzmrufqdw_KcvUfxLY-NpJOwn57FVJIGbZ6Cu7A4zzemNjRFu7mH3W/exec';
 
-    /* Auto uppercase kode saat diketik */
+    const namaInput   = document.getElementById('nama');
+    const kodeInput   = document.getElementById('kode');
+    const btnDownload = document.getElementById('btnDownload');
+    const statusBox   = document.getElementById('statusBox');
+    const statusIcon  = document.getElementById('statusIcon');
+    const statusText  = document.getElementById('statusText');
+
+    /* Auto uppercase & sanitasi input kode */
     kodeInput.addEventListener('input', () => {
       kodeInput.value = kodeInput.value
         .toUpperCase()
@@ -421,32 +439,82 @@
         .slice(0, 6);
     });
 
-    function showError(message) {
-      statusBox.className = 'status-box show error';
+    function showStatus(type, message) {
+      statusBox.className = 'status-box show ' + type;
+      if (type === 'info') statusIcon.className = 'fas fa-info-circle';
+      else if (type === 'success') statusIcon.className = 'fas fa-check-circle';
+      else if (type === 'error') statusIcon.className = 'fas fa-exclamation-circle';
       statusText.innerHTML = message;
     }
 
-    downloadForm.addEventListener('submit', function(e) {
+    function setLoading(isLoading) {
+      if (isLoading) {
+        btnDownload.disabled = true;
+        btnDownload.innerHTML = '<span class="spinner"></span> Memproses...';
+      } else {
+        btnDownload.disabled = false;
+        btnDownload.innerHTML = '<i class="fas fa-download"></i> Download';
+      }
+    }
+
+    btnDownload.addEventListener('click', async () => {
       const nama = namaInput.value.trim();
       const kode = kodeInput.value.trim().toUpperCase();
 
       if (!nama) {
-        e.preventDefault();
-        showError('Nama wajib diisi!');
+        showStatus('error', 'Nama wajib diisi!');
         namaInput.focus();
         return;
       }
-
       if (!kode || kode.length !== 6) {
-        e.preventDefault();
-        showError('Kode wajib diisi (6 karakter)!');
+        showStatus('error', 'Kode wajib diisi (6 karakter)!');
         kodeInput.focus();
         return;
       }
 
-      /* Tampilan indikator loading */
-      btnDownload.disabled = true;
-      btnDownload.innerHTML = '<span class="spinner"></span> Memproses...';
+      setLoading(true);
+      showStatus('info', 'Memeriksa kode...');
+
+      try {
+        const formData = new URLSearchParams();
+        formData.append('nama', nama);
+        formData.append('kode', kode);
+
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: formData.toString()
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          showStatus('error', result.message || 'Kode tidak ditemukan.');
+          setLoading(false);
+          return;
+        }
+
+        showStatus('success', `Berhasil! Mengunduh <b>${result.fileName}</b>...`);
+
+        /* Trigger pengunduhan tanpa berpindah halaman */
+        const a = document.createElement('a');
+        a.href = result.downloadUrl;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        
+        setTimeout(() => {
+          document.body.removeChild(a);
+        }, 1000);
+
+      } catch (err) {
+        console.error(err);
+        showStatus('error', 'Terjadi kesalahan saat memproses permintaan.');
+      } finally {
+        setLoading(false);
+      }
     });
   </script>
 </body>
