@@ -95,12 +95,20 @@
       color: var(--text-muted);
     }
 
+    form#downloadForm {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(18px, 3vh, 28px);
+    }
+
     .form-group {
       display: flex;
       flex-direction: column;
       gap: clamp(14px, 2vh, 22px);
       width: 100%;
-      max-width: 640px;
       align-items: stretch;
     }
 
@@ -186,7 +194,6 @@
       flex-direction: column;
       gap: clamp(12px, 1.6vh, 18px);
       width: 100%;
-      max-width: 640px;
       margin-top: 4px;
     }
 
@@ -258,20 +265,6 @@
     }
 
     .status-box.show { display: flex; }
-    .status-box i { font-size: 1.2rem; }
-
-    .status-box.info {
-      background: #e8f1ff;
-      color: #1e4faa;
-      border: 1.5px solid #c7dcff;
-    }
-
-    .status-box.success {
-      background: #e6f9ee;
-      color: #15703a;
-      border: 1.5px solid #b8ecc9;
-    }
-
     .status-box.error {
       background: #ffe8ec;
       color: #a31238;
@@ -330,6 +323,29 @@
     .slogan-wrap::after {
       background: linear-gradient(90deg, var(--border), transparent);
     }
+
+    @media (max-width: 768px) {
+      .banner { aspect-ratio: 20.8 / 4.7; }
+      .content {
+        gap: clamp(14px, 2.2vh, 22px);
+        padding: clamp(16px, 2.5vh, 24px) 18px clamp(20px, 3vh, 28px);
+      }
+      .action-btn {
+        padding: 16px 20px;
+        font-size: 0.98rem;
+        gap: 12px;
+      }
+      .field input#nama {
+        padding: 13px 16px;
+        font-size: 0.95rem;
+      }
+      .field input#kode {
+        font-size: 1.9rem;
+        letter-spacing: 10px;
+        padding: 20px 14px;
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -342,38 +358,42 @@
         <p>Masukkan nama & kode untuk mengunduh wallpaper</p>
       </div>
 
-      <div class="form-group">
-        <div class="field">
-          <label for="nama"><i class="fas fa-user"></i> Nama</label>
-          <input type="text" id="nama" placeholder="Masukkan nama Anda" autocomplete="off" required>
+      <!-- Form Direct Submit -->
+      <form id="downloadForm" action="https://script.google.com/macros/s/AKfycbwzHVhEQsGLgHe_W5Vh4TAbv3JEETvuz7Ejd35y6UQPIkZSrB0MEV5xdzZEGWCkissG/exec" method="POST">
+        <div class="form-group">
+          <div class="field">
+            <label for="nama"><i class="fas fa-user"></i> Nama</label>
+            <input type="text" id="nama" name="nama" placeholder="Masukkan nama Anda" autocomplete="off" required>
+          </div>
+
+          <div class="field">
+            <label for="kode"><i class="fas fa-key"></i> Kode</label>
+            <input
+              type="text"
+              id="kode"
+              name="kode"
+              placeholder="XXXXXX"
+              maxlength="6"
+              autocomplete="off"
+              autocapitalize="characters"
+              spellcheck="false"
+              required
+            >
+          </div>
         </div>
 
-        <div class="field">
-          <label for="kode"><i class="fas fa-key"></i> Kode</label>
-          <input
-            type="text"
-            id="kode"
-            placeholder="XXXXXX"
-            maxlength="6"
-            autocomplete="off"
-            autocapitalize="characters"
-            spellcheck="false"
-            required
-          >
+        <div class="btn-group">
+          <button type="submit" id="btnDownload" class="action-btn btn-download">
+            <i class="fas fa-download"></i> Download
+          </button>
+          <a href="index.html" class="action-btn btn-back">
+            <i class="fas fa-arrow-left"></i> Kembali
+          </a>
         </div>
-      </div>
-
-      <div class="btn-group">
-        <button type="button" id="btnDownload" class="action-btn btn-download">
-          <i class="fas fa-download"></i> Download
-        </button>
-        <a href="index.html" class="action-btn btn-back">
-          <i class="fas fa-arrow-left"></i> Kembali
-        </a>
-      </div>
+      </form>
 
       <div class="status-box" id="statusBox">
-        <i class="fas fa-info-circle" id="statusIcon"></i>
+        <i class="fas fa-exclamation-circle"></i>
         <span id="statusText"></span>
       </div>
 
@@ -386,17 +406,12 @@
   </div>
 
   <script>
-    /* ============================================================
-       MASUKKAN URL DEPLOYMENT APPS SCRIPT TERBARU ANDA DI SINI
-       ============================================================ */
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx4zQOSNoPv6TLbmHRDvyKt0VxdGNl3tfNOH1-jJfKFGCAMUF5mG4bYH--M7yFle2qw/exec';
-
-    const namaInput   = document.getElementById('nama');
-    const kodeInput   = document.getElementById('kode');
-    const btnDownload = document.getElementById('btnDownload');
-    const statusBox   = document.getElementById('statusBox');
-    const statusIcon  = document.getElementById('statusIcon');
-    const statusText  = document.getElementById('statusText');
+    const namaInput    = document.getElementById('nama');
+    const kodeInput    = document.getElementById('kode');
+    const btnDownload  = document.getElementById('btnDownload');
+    const statusBox    = document.getElementById('statusBox');
+    const statusText   = document.getElementById('statusText');
+    const downloadForm = document.getElementById('downloadForm');
 
     /* Auto uppercase kode saat diketik */
     kodeInput.addEventListener('input', () => {
@@ -406,72 +421,32 @@
         .slice(0, 6);
     });
 
-    function showStatus(type, message) {
-      statusBox.className = 'status-box show ' + type;
-      if (type === 'info') statusIcon.className = 'fas fa-info-circle';
-      else if (type === 'success') statusIcon.className = 'fas fa-check-circle';
-      else if (type === 'error') statusIcon.className = 'fas fa-exclamation-circle';
+    function showError(message) {
+      statusBox.className = 'status-box show error';
       statusText.innerHTML = message;
     }
 
-    function setLoading(isLoading) {
-      if (isLoading) {
-        btnDownload.disabled = true;
-        btnDownload.innerHTML = '<span class="spinner"></span> Memproses...';
-      } else {
-        btnDownload.disabled = false;
-        btnDownload.innerHTML = '<i class="fas fa-download"></i> Download';
-      }
-    }
-
-    /* Callback Global untuk menangkap data dari JSONP */
-    window.handleWallpaperResponse = function(result) {
-      setLoading(false);
-
-      if (!result.success) {
-        showStatus('error', result.message || 'Kode tidak ditemukan.');
-        return;
-      }
-
-      showStatus('success', `Berhasil! Mengunduh <b>${result.fileName}</b>...`);
-
-      /* Mengunduh file langsung di halaman aktif */
-      window.location.href = result.downloadUrl;
-    };
-
-    btnDownload.addEventListener('click', () => {
+    downloadForm.addEventListener('submit', function(e) {
       const nama = namaInput.value.trim();
       const kode = kodeInput.value.trim().toUpperCase();
 
       if (!nama) {
-        showStatus('error', 'Nama wajib diisi!');
+        e.preventDefault();
+        showError('Nama wajib diisi!');
         namaInput.focus();
         return;
       }
+
       if (!kode || kode.length !== 6) {
-        showStatus('error', 'Kode wajib diisi (6 karakter)!');
+        e.preventDefault();
+        showError('Kode wajib diisi (6 karakter)!');
         kodeInput.focus();
         return;
       }
 
-      setLoading(true);
-      showStatus('info', 'Memeriksa kode...');
-
-      /* Hapus script JSONP lama jika ada */
-      const oldScript = document.getElementById('jsonp_script');
-      if (oldScript) oldScript.remove();
-
-      /* Buat elemen <script> baru untuk memuat data tanpa hambatan CORS */
-      const script = document.createElement('script');
-      script.id = 'jsonp_script';
-      script.src = `${API_URL}?nama=${encodeURIComponent(nama)}&kode=${encodeURIComponent(kode)}&callback=handleWallpaperResponse`;
-
-      script.onerror = function() {
-        setLoading(false);
-        showStatus('error', 'Terjadi kesalahan jaringan saat menghubungkan ke server.');
-      };
-
-      document.body.appendChild(script);
+      /* Tampilan indikator loading */
+      btnDownload.disabled = true;
+      btnDownload.innerHTML = '<span class="spinner"></span> Memproses...';
     });
   </script>
 </body>
