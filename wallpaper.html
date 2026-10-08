@@ -34,9 +34,6 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    /* ============================================
-       WRAPPER UTAMA
-       ============================================ */
     .card {
       width: 100%;
       min-height: 100vh;
@@ -51,7 +48,7 @@
        ============================================ */
     .banner {
       width: 100%;
-      aspect-ratio: 32.5 / 4.7; /* DEFAULT: PC */
+      aspect-ratio: 32.5 / 4.7;
       flex-shrink: 0;
       background-image: url('https://i.ibb.co.com/v4CHctNW/header.jpg');
       background-size: cover;
@@ -136,7 +133,6 @@
       margin-right: 6px;
     }
 
-    /* Input umum */
     .field input {
       width: 100%;
       border-radius: 18px;
@@ -154,18 +150,18 @@
       box-shadow: 0 0 0 4px rgba(255, 61, 154, 0.12);
     }
 
-    /* ---------- Input Nama (CENTER) ---------- */
+    /* Input Nama — center */
     .field input#nama {
       padding: clamp(14px, 1.8vh, 18px) clamp(18px, 2vw, 24px);
       font-size: clamp(0.95rem, 1.3vw, 1.1rem);
-      text-align: center;      /* ⬅️ Teks di tengah */
+      text-align: center;
     }
 
     .field input#nama::placeholder {
-      text-align: center;       /* ⬅️ Placeholder juga di tengah */
+      text-align: center;
     }
 
-    /* ---------- Input Kode (BESAR & CENTER) ---------- */
+    /* Input Kode — besar & center */
     .field input#kode {
       padding: clamp(20px, 2.8vh, 30px) 20px;
       font-size: clamp(1.8rem, 4vw, 2.6rem);
@@ -477,20 +473,19 @@
 
   <script>
     /* ============================================================
-       KONFIGURASI
+       KONFIGURASI — GANTI DENGAN URL WEB APP APPS SCRIPT ANDA
        ============================================================ */
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyoXXR6R60i1ztDFYC1aZQAOEKz0Y2QGZ2YzCoVLPHRLNAmiM2DB1eI3Esi_uVBDUrx/exec';
-    const DEFAULT_EXT = 'jpg';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxKSnZWrihIxhgt-vxjK2wFDeXt2MdwQ1OOmIfNTOB9JbSzmQuDKm2fyUqA7fquElOF/exec';
 
     /* ============================================================
        ELEMEN
        ============================================================ */
-    const namaInput = document.getElementById('nama');
-    const kodeInput = document.getElementById('kode');
+    const namaInput   = document.getElementById('nama');
+    const kodeInput   = document.getElementById('kode');
     const btnDownload = document.getElementById('btnDownload');
-    const statusBox = document.getElementById('statusBox');
-    const statusIcon = document.getElementById('statusIcon');
-    const statusText = document.getElementById('statusText');
+    const statusBox   = document.getElementById('statusBox');
+    const statusIcon  = document.getElementById('statusIcon');
+    const statusText  = document.getElementById('statusText');
 
     /* Auto uppercase & filter kode saat diketik */
     kodeInput.addEventListener('input', () => {
@@ -522,28 +517,35 @@
     }
 
     /* ============================================================
-       AMBIL NAMA FILE DARI HEADER Content-Disposition
+       KONVERSI BASE64 → BLOB → DOWNLOAD
        ============================================================ */
-    function getFileNameFromHeader(response, fallbackName) {
-      const disposition =
-        response.headers.get('Content-Disposition') ||
-        response.headers.get('content-disposition');
+    function base64ToBlob(base64, mimeType) {
+      const byteCharacters = atob(base64);
+      const sliceSize = 1024;
+      const byteArrays = [];
 
-      if (!disposition) return fallbackName;
-
-      let match = disposition.match(/filename\*=UTF-8''([^;]+)/i);
-      if (match && match[1]) {
-        try {
-          return decodeURIComponent(match[1]).trim().replace(/^["']|["']$/g, '');
-        } catch (e) { /* lanjut */ }
+      for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+        byteArrays.push(new Uint8Array(byteNumbers));
       }
 
-      match = disposition.match(/filename="?([^";]+)"?/i);
-      if (match && match[1]) {
-        return match[1].trim().replace(/^["']|["']$/g, '');
-      }
+      return new Blob(byteArrays, { type: mimeType || 'application/octet-stream' });
+    }
 
-      return fallbackName;
+    function triggerDownload(blob, fileName) {
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      // Beri sedikit waktu sebelum revoke
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
     }
 
     /* ============================================================
@@ -582,7 +584,23 @@
           body: formData
         });
 
-        const result = await response.json();
+        /* Baca sebagai teks dulu biar kalau HTML muncul kita bisa kasih pesan jelas */
+        const rawText = await response.text();
+
+        if (rawText.trim().startsWith('<')) {
+          console.error('Respons bukan JSON:', rawText.substring(0, 500));
+          throw new Error(
+            'API tidak merespons JSON. Cek pengaturan deployment Apps Script.'
+          );
+        }
+
+        let result;
+        try {
+          result = JSON.parse(rawText);
+        } catch (e) {
+          console.error('Gagal parse JSON:', rawText.substring(0, 500));
+          throw new Error('Respons API tidak valid (bukan JSON).');
+        }
 
         if (!result.success) {
           showStatus('error', result.message || 'Kode tidak ditemukan atau tidak valid.');
@@ -590,50 +608,15 @@
           return;
         }
 
-        const sheetName = (result.fileName || 'wallpaper').trim();
-        const fallbackName = /\.[a-zA-Z0-9]+$/.test(sheetName)
-          ? sheetName
-          : sheetName + '.' + DEFAULT_EXT;
-
         showStatus('info', 'Menyiapkan file untuk diunduh...');
 
-        let downloadSuccess = false;
+        /* Konversi Base64 → Blob → trigger download */
+        const blob = base64ToBlob(result.data, result.mimeType);
+        const fileName = result.fileName || 'wallpaper.jpg';
 
-        try {
-          const fileResponse = await fetch(result.downloadUrl);
-          if (!fileResponse.ok) throw new Error('Gagal mengambil file');
+        triggerDownload(blob, fileName);
 
-          const blob = await fileResponse.blob();
-
-          let finalName = getFileNameFromHeader(fileResponse, null);
-
-          if (!finalName) {
-            finalName = fallbackName;
-            const ct = (fileResponse.headers.get('Content-Type') || '').toLowerCase();
-            if (ct.includes('image/png')) finalName = sheetName + '.png';
-            else if (ct.includes('image/webp')) finalName = sheetName + '.webp';
-            else if (ct.includes('image/jpeg')) finalName = sheetName + '.jpg';
-          }
-
-          const blobUrl = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = blobUrl;
-          a.download = finalName;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(blobUrl);
-
-          downloadSuccess = true;
-          showStatus('success', `Berhasil! Wallpaper <b>${finalName}</b> sedang diunduh.`);
-        } catch (err) {
-          console.warn('Fetch blob gagal, fallback ke direct link:', err);
-        }
-
-        if (!downloadSuccess) {
-          window.open(result.downloadUrl, '_blank');
-          showStatus('success', `Wallpaper <b>${fallbackName}</b> dibuka di tab baru.`);
-        }
+        showStatus('success', `Berhasil! Wallpaper <b>${fileName}</b> sedang diunduh.`);
 
       } catch (err) {
         console.error(err);
