@@ -43,9 +43,6 @@
       flex-direction: column;
     }
 
-    /* ============================================
-       BANNER HEADER — ikut ter-scroll
-       ============================================ */
     .banner {
       width: 100%;
       aspect-ratio: 32.5 / 4.7;
@@ -65,9 +62,6 @@
       pointer-events: none;
     }
 
-    /* ============================================
-       KONTEN
-       ============================================ */
     .content {
       flex: 1;
       display: flex;
@@ -101,7 +95,6 @@
       color: var(--text-muted);
     }
 
-    /* ---------- Form Group ---------- */
     .form-group {
       display: flex;
       flex-direction: column;
@@ -150,7 +143,6 @@
       box-shadow: 0 0 0 4px rgba(255, 61, 154, 0.12);
     }
 
-    /* Input Nama — center */
     .field input#nama {
       padding: clamp(14px, 1.8vh, 18px) clamp(18px, 2vw, 24px);
       font-size: clamp(0.95rem, 1.3vw, 1.1rem);
@@ -161,7 +153,6 @@
       text-align: center;
     }
 
-    /* Input Kode — besar & center */
     .field input#kode {
       padding: clamp(20px, 2.8vh, 30px) 20px;
       font-size: clamp(1.8rem, 4vw, 2.6rem);
@@ -190,7 +181,6 @@
       text-align: center;
     }
 
-    /* ---------- Tombol ---------- */
     .btn-group {
       display: flex;
       flex-direction: column;
@@ -227,11 +217,14 @@
       color: #ffffff;
       box-shadow: 0 12px 28px -10px rgba(255, 61, 154, 0.7);
     }
+
     .btn-download:hover {
       transform: translateY(-5px);
       box-shadow: 0 24px 36px -12px rgba(255, 61, 154, 0.9);
     }
+
     .btn-download:active { transform: translateY(-2px); }
+
     .btn-download:disabled {
       opacity: 0.6;
       cursor: not-allowed;
@@ -244,14 +237,13 @@
       border: 1.5px solid var(--border);
       box-shadow: 0 6px 16px -8px rgba(20, 30, 55, 0.15);
     }
+
     .btn-back:hover {
       background: #f5f8fc;
       transform: translateY(-4px);
       box-shadow: 0 14px 24px -10px rgba(20, 30, 55, 0.25);
     }
-    .btn-back:active { transform: translateY(-2px); }
 
-    /* ---------- Status / Alert ---------- */
     .status-box {
       display: none;
       align-items: center;
@@ -286,7 +278,6 @@
       border: 1.5px solid #ffc4d0;
     }
 
-    /* ---------- Spinner ---------- */
     .spinner {
       display: inline-block;
       width: 16px;
@@ -301,9 +292,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* ============================================
-       SLOGAN
-       ============================================ */
     .slogan {
       text-align: center;
       padding: clamp(14px, 2vh, 22px) 16px;
@@ -341,80 +329,6 @@
 
     .slogan-wrap::after {
       background: linear-gradient(90deg, var(--border), transparent);
-    }
-
-    /* ============================================
-       RESPONSIVE
-       ============================================ */
-    @media (max-width: 900px) {
-      .content {
-        gap: clamp(16px, 2.5vh, 26px);
-        padding: clamp(18px, 3vh, 30px) clamp(18px, 4vw, 40px) clamp(22px, 3.5vh, 36px);
-      }
-    }
-
-    @media (max-width: 768px) {
-      .banner { aspect-ratio: 20.8 / 4.7; }
-
-      .content {
-        gap: clamp(14px, 2.2vh, 22px);
-        padding: clamp(16px, 2.5vh, 24px) 18px clamp(20px, 3vh, 28px);
-      }
-
-      .action-btn {
-        padding: 16px 20px;
-        font-size: 0.98rem;
-        gap: 12px;
-      }
-      .action-btn i { font-size: 1.1rem; }
-
-      .field input#nama {
-        padding: 13px 16px;
-        font-size: 0.95rem;
-      }
-
-      .field input#kode {
-        font-size: 1.9rem;
-        letter-spacing: 10px;
-        padding: 20px 14px;
-        max-width: 100%;
-      }
-
-      .slogan-text { letter-spacing: 1.5px; }
-    }
-
-    @media (max-width: 380px) {
-      .action-btn {
-        padding: 14px 18px;
-        font-size: 0.92rem;
-      }
-      .field input#kode {
-        font-size: 1.6rem;
-        letter-spacing: 8px;
-        padding: 18px 12px;
-      }
-      .slogan-text {
-        font-size: 0.85rem;
-        letter-spacing: 1px;
-      }
-    }
-
-    @media (max-height: 520px) and (orientation: landscape) {
-      .content { gap: 12px; padding: 12px 24px; }
-      .action-btn { padding: 12px 18px; font-size: 0.9rem; }
-      .field input#kode {
-        font-size: 1.4rem;
-        letter-spacing: 6px;
-        padding: 12px 14px;
-      }
-      .slogan { padding: 8px 16px; }
-      .slogan-text { font-size: 0.8rem; letter-spacing: 1px; }
-      .slogan-wrap::before,
-      .slogan-wrap::after { width: 20px; }
-    }
-
-    @media (min-width: 1400px) {
-      .content { gap: 34px; }
     }
   </style>
 </head>
@@ -473,13 +387,10 @@
 
   <script>
     /* ============================================================
-       KONFIGURASI — GANTI DENGAN URL WEB APP APPS SCRIPT ANDA
+       MASUKKAN URL DEPLOYMENT APPS SCRIPT TERBARU ANDA DI SINI
        ============================================================ */
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxKSnZWrihIxhgt-vxjK2wFDeXt2MdwQ1OOmIfNTOB9JbSzmQuDKm2fyUqA7fquElOF/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx4zQOSNoPv6TLbmHRDvyKt0VxdGNl3tfNOH1-jJfKFGCAMUF5mG4bYH--M7yFle2qw/exec';
 
-    /* ============================================================
-       ELEMEN
-       ============================================================ */
     const namaInput   = document.getElementById('nama');
     const kodeInput   = document.getElementById('kode');
     const btnDownload = document.getElementById('btnDownload');
@@ -487,7 +398,7 @@
     const statusIcon  = document.getElementById('statusIcon');
     const statusText  = document.getElementById('statusText');
 
-    /* Auto uppercase & filter kode saat diketik */
+    /* Auto uppercase kode saat diketik */
     kodeInput.addEventListener('input', () => {
       kodeInput.value = kodeInput.value
         .toUpperCase()
@@ -495,9 +406,6 @@
         .slice(0, 6);
     });
 
-    /* ============================================================
-       UTIL STATUS
-       ============================================================ */
     function showStatus(type, message) {
       statusBox.className = 'status-box show ' + type;
       if (type === 'info') statusIcon.className = 'fas fa-info-circle';
@@ -516,42 +424,22 @@
       }
     }
 
-    /* ============================================================
-       KONVERSI BASE64 → BLOB → DOWNLOAD
-       ============================================================ */
-    function base64ToBlob(base64, mimeType) {
-      const byteCharacters = atob(base64);
-      const sliceSize = 1024;
-      const byteArrays = [];
+    /* Callback Global untuk menangkap data dari JSONP */
+    window.handleWallpaperResponse = function(result) {
+      setLoading(false);
 
-      for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        const slice = byteCharacters.slice(offset, offset + sliceSize);
-        const byteNumbers = new Array(slice.length);
-        for (let i = 0; i < slice.length; i++) {
-          byteNumbers[i] = slice.charCodeAt(i);
-        }
-        byteArrays.push(new Uint8Array(byteNumbers));
+      if (!result.success) {
+        showStatus('error', result.message || 'Kode tidak ditemukan.');
+        return;
       }
 
-      return new Blob(byteArrays, { type: mimeType || 'application/octet-stream' });
-    }
+      showStatus('success', `Berhasil! Mengunduh <b>${result.fileName}</b>...`);
 
-    function triggerDownload(blob, fileName) {
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      // Beri sedikit waktu sebelum revoke
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
-    }
+      /* Mengunduh file langsung di halaman aktif */
+      window.location.href = result.downloadUrl;
+    };
 
-    /* ============================================================
-       HANDLER DOWNLOAD
-       ============================================================ */
-    btnDownload.addEventListener('click', async () => {
+    btnDownload.addEventListener('click', () => {
       const nama = namaInput.value.trim();
       const kode = kodeInput.value.trim().toUpperCase();
 
@@ -560,70 +448,30 @@
         namaInput.focus();
         return;
       }
-      if (!kode) {
-        showStatus('error', 'Kode wajib diisi!');
-        kodeInput.focus();
-        return;
-      }
-      if (kode.length !== 6) {
-        showStatus('error', 'Kode harus 6 karakter!');
+      if (!kode || kode.length !== 6) {
+        showStatus('error', 'Kode wajib diisi (6 karakter)!');
         kodeInput.focus();
         return;
       }
 
       setLoading(true);
-      showStatus('info', 'Sedang memproses permintaan Anda...');
+      showStatus('info', 'Memeriksa kode...');
 
-      try {
-        const formData = new FormData();
-        formData.append('nama', nama);
-        formData.append('kode', kode);
+      /* Hapus script JSONP lama jika ada */
+      const oldScript = document.getElementById('jsonp_script');
+      if (oldScript) oldScript.remove();
 
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          body: formData
-        });
+      /* Buat elemen <script> baru untuk memuat data tanpa hambatan CORS */
+      const script = document.createElement('script');
+      script.id = 'jsonp_script';
+      script.src = `${API_URL}?nama=${encodeURIComponent(nama)}&kode=${encodeURIComponent(kode)}&callback=handleWallpaperResponse`;
 
-        /* Baca sebagai teks dulu biar kalau HTML muncul kita bisa kasih pesan jelas */
-        const rawText = await response.text();
-
-        if (rawText.trim().startsWith('<')) {
-          console.error('Respons bukan JSON:', rawText.substring(0, 500));
-          throw new Error(
-            'API tidak merespons JSON. Cek pengaturan deployment Apps Script.'
-          );
-        }
-
-        let result;
-        try {
-          result = JSON.parse(rawText);
-        } catch (e) {
-          console.error('Gagal parse JSON:', rawText.substring(0, 500));
-          throw new Error('Respons API tidak valid (bukan JSON).');
-        }
-
-        if (!result.success) {
-          showStatus('error', result.message || 'Kode tidak ditemukan atau tidak valid.');
-          setLoading(false);
-          return;
-        }
-
-        showStatus('info', 'Menyiapkan file untuk diunduh...');
-
-        /* Konversi Base64 → Blob → trigger download */
-        const blob = base64ToBlob(result.data, result.mimeType);
-        const fileName = result.fileName || 'wallpaper.jpg';
-
-        triggerDownload(blob, fileName);
-
-        showStatus('success', `Berhasil! Wallpaper <b>${fileName}</b> sedang diunduh.`);
-
-      } catch (err) {
-        console.error(err);
-        showStatus('error', 'Terjadi kesalahan: ' + err.message);
-      } finally {
+      script.onerror = function() {
         setLoading(false);
-      }
+        showStatus('error', 'Terjadi kesalahan jaringan saat menghubungkan ke server.');
+      };
+
+      document.body.appendChild(script);
     });
   </script>
 </body>
