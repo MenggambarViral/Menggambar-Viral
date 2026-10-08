@@ -135,6 +135,18 @@
     }
     .btn-kerjasama:active { transform: translateY(-2px); }
 
+    /* ---------- Tombol Download Wallpaper (Pink) ---------- */
+    .btn-wallpaper {
+      background: linear-gradient(135deg, #ff6ec4 0%, #ff3d9a 50%, #ff8bcb 100%);
+      color: #ffffff;
+      box-shadow: 0 12px 28px -10px rgba(255, 61, 154, 0.7);
+    }
+    .btn-wallpaper:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 24px 36px -12px rgba(255, 61, 154, 0.9);
+    }
+    .btn-wallpaper:active { transform: translateY(-2px); }
+
     /* ---------- Divider ---------- */
     .divider {
       width: 100%;
@@ -417,13 +429,16 @@
     <div class="banner"></div>
 
     <div class="content">
-      <!-- Tombol Aksi (Pesan & Kerjasama) -->
+      <!-- Tombol Aksi (Pesan, Kerjasama & Download Wallpaper) -->
       <div class="action-group">
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSfCPFIbshW4NQqXVpRuPWyfQz3LJYlm2wCSut-ocpB1EnVkvw/viewform?usp=dialog" target="_blank" rel="noopener noreferrer" class="action-btn btn-pesan">
           <i class="fas fa-paint-brush"></i> Pesan Gambar
         </a>
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSdXtYOdmYysRm7K20cGUAysRuZGBrMo6EBNNLZLkOu619bS4g/viewform?usp=dialog" target="_blank" rel="noopener noreferrer" class="action-btn btn-kerjasama">
           <i class="fas fa-handshake"></i> Kerjasama
+        </a>
+        <a href="wallpaper.html" class="action-btn btn-wallpaper">
+          <i class="fas fa-download"></i> Download Wallpaper
         </a>
         <div class="note">
           <i class="fas fa-arrow-up"></i> Klik tombol untuk mengisi formulir
